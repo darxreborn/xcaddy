@@ -1,9 +1,9 @@
 name: Watch Caddy releases & publish xcaddy
 
 on:
-  # Watcher: check upstream a few times a day for a new Caddy release
   schedule:
-    - cron: "0 */6 * * *"   # every 6 hours
+    - cron: "0 */6 * * *"   # watcher: build only if a new Caddy release appeared
+    - cron: "0 5 * * 1"     # Mondays: forced rebuild to pull latest modules (@main / unpinned)
   # Manual trigger (always builds latest)
   workflow_dispatch:
   # Rebuild when the Dockerfile or this workflow changes
@@ -36,10 +36,15 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Latest Caddy release: $version"
 
-          # Manual runs and Dockerfile changes always build.
+          # Manual runs, Dockerfile changes, and the weekly forced rebuild always build.
           if [ "${{ github.event_name }}" != "schedule" ]; then
             echo "build=true" >> "$GITHUB_OUTPUT"
             echo "Non-schedule event (${{ github.event_name }}) -> building."
+            exit 0
+          fi
+          if [ "${{ github.event.schedule }}" = "0 5 * * 1" ]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            echo "Weekly forced rebuild -> building to refresh modules."
             exit 0
           fi
 

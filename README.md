@@ -15,6 +15,9 @@ Bundled modules:
 
 - **Watcher** — every 6 hours it checks the latest Caddy GitHub release. If that
   version hasn't been built yet, it builds and pushes.
+- **Weekly rebuild** — Mondays 05:00 UTC it force-rebuilds to pull the latest
+  `@main`/unpinned modules (crowdsec-bouncer, caddy-l4, transform-encoder) even
+  when Caddy itself hasn't released.
 - **Manual** — *Run workflow* button in the Actions tab (always builds latest).
 - **On change** — when the `Dockerfile` or workflow is updated.
 
