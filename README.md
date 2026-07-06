@@ -11,13 +11,19 @@ Bundled modules:
 
 ## Automated builds
 
-`.github/workflows/build.yml` builds and pushes multi-arch (`amd64` + `arm64`) images:
+`.github/workflows/build.yml` watches for new **Caddy releases** and publishes on change:
 
-- **Weekly** (Mondays 04:00 UTC) — picks up new releases of Caddy and the modules
-- **Manual** — via the *Run workflow* button in the Actions tab
-- **On change** — when the `Dockerfile` or workflow is updated
+- **Watcher** — every 6 hours it checks the latest Caddy GitHub release. If that
+  version hasn't been built yet, it builds and pushes.
+- **Manual** — *Run workflow* button in the Actions tab (always builds latest).
+- **On change** — when the `Dockerfile` or workflow is updated.
 
-Each build is tagged `:latest` and `:<caddy-version>` (e.g. `:2.9.1`).
+Each build is pinned to the release (`CADDY_VERSION`) and pushed as:
+
+- `darxreborn/xcaddy:latest` — always the newest build
+- `darxreborn/xcaddy:<version>` — e.g. `2.9.1`, so previous images stay reachable by version
+
+Images are `linux/amd64`.
 
 ### Required secrets
 
